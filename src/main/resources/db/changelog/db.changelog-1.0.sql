@@ -19,15 +19,15 @@ CREATE TABLE movies (
 
 CREATE TABLE halls (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(64),
-    total_seats INT
+    name VARCHAR(64) NOT NULL,
+    total_seats INT NOT NULL
 );
 
 CREATE TABLE seats (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    hall_id BIGINT REFERENCES halls(id) ON DELETE CASCADE,
-    row VARCHAR(5),
-    place INT
+    hall_id BIGINT NOT NULL REFERENCES halls(id) ON DELETE CASCADE,
+    row VARCHAR(5) NOT NULL,
+    place INT NOT NULL
 );
 
 CREATE TABLE sessions (
@@ -37,7 +37,7 @@ CREATE TABLE sessions (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     price NUMERIC NOT NULL
-)
+);
 
 CREATE TABLE tickets (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
