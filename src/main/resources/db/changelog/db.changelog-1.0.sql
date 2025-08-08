@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset pressf:1
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email VARCHAR(64) NOT NULL UNIQUE,
@@ -7,6 +10,7 @@ CREATE TABLE users (
     role VARCHAR(20) DEFAULT 'USER'
 );
 
+--changeset pressf:2
 CREATE TABLE movies (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -17,12 +21,14 @@ CREATE TABLE movies (
     image VARCHAR(512) NOT NULL
 );
 
+--changeset pressf:3
 CREATE TABLE halls (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(64) NOT NULL,
     total_seats INT NOT NULL
 );
 
+--changeset pressf:4
 CREATE TABLE seats (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     hall_id BIGINT NOT NULL REFERENCES halls(id) ON DELETE CASCADE,
@@ -30,6 +36,7 @@ CREATE TABLE seats (
     place INT NOT NULL
 );
 
+--changeset pressf:5
 CREATE TABLE sessions (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     movie_id BIGINT NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
@@ -39,6 +46,7 @@ CREATE TABLE sessions (
     price NUMERIC NOT NULL
 );
 
+--changeset pressf:6
 CREATE TABLE tickets (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     session_id BIGINT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
@@ -48,6 +56,7 @@ CREATE TABLE tickets (
     expires_at TIMESTAMP NOT NULL
 );
 
+--changeset pressf:7
 CREATE TABLE payments (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     ticket_id BIGINT NOT NULL REFERENCES tickets(id),

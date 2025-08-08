@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class User {
     private String name;
     @Column(nullable = false)
     private String password;
-    private double balance;
+    private BigDecimal balance;
     @Enumerated(EnumType.STRING)
     private Role role;
 }

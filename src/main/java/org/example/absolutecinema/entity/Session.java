@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,5 +28,5 @@ public class Session {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
     @Column(nullable = false)
-    private double price;
+    private BigDecimal price;
 }
