@@ -1,6 +1,10 @@
 package org.example.absolutecinema.dto;
 
-// Для создания фильма
+/**
+ * DTO для создания нового фильма.
+ * Используется в запросах на добавление фильма.
+ * Содержит все данные, необходимые для создания записи фильма в базе.
+ */
 public record CreateMovieDto(String title,
                              int year,
                              String genre,

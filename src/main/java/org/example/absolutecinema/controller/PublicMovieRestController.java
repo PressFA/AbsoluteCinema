@@ -1,15 +1,30 @@
 package org.example.absolutecinema.controller;
 
-import org.example.absolutecinema.entity.Movie;
+import lombok.RequiredArgsConstructor;
+import org.example.absolutecinema.dto.FullInfoMovieDto;
+import org.example.absolutecinema.dto.IdMovieDto;
+import org.example.absolutecinema.dto.InfoMovieDto;
+import org.example.absolutecinema.service.MovieService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/movies")
 public class PublicMovieRestController {
-//    public List<Movie> getTheatersMovies() {
-//
-//    }
+    private final MovieService movieService;
+
+    @GetMapping
+    public Page<InfoMovieDto> getTheatersMovies(Pageable pageable) {
+        return movieService.findAllTheatersMovies(pageable);
+    }
+
+    @GetMapping("/{id}")
+    public FullInfoMovieDto getMovie(@PathVariable Long id) {
+        return movieService.findMovieById(new IdMovieDto(id));
+    }
 }
