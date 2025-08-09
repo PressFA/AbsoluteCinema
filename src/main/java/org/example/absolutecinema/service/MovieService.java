@@ -34,18 +34,24 @@ public class MovieService {
     }
 
     @Transactional
-    public IdMovieDto createMovie(CreateMovieDto movieDto) {
-        Movie movie = Movie.builder()
-                .title(movieDto.title())
-                .year(movieDto.year())
-                .genre(movieDto.genre())
-                .description(movieDto.description())
-                .duration(movieDto.duration())
-                .image(movieDto.image())
+    public InfoMovieDto create(CreateMovieDto dto) {
+        Movie created = Movie.builder()
+                .title(dto.title())
+                .year(dto.year())
+                .genre(dto.genre())
+                .description(dto.description())
+                .duration(dto.duration())
+                .image(dto.image())
                 .build();
 
-        Movie savedMovie = movieRepository.save(movie);
-        return new IdMovieDto(savedMovie.getId());
+        Movie saved = movieRepository.save(created);
+
+        return InfoMovieDto.builder()
+                .id(saved.getId())
+                .title(saved.getTitle())
+                .year(saved.getYear())
+                .image(saved.getImage())
+                .build();
     }
 
 

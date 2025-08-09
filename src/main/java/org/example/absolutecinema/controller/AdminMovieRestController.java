@@ -2,10 +2,8 @@ package org.example.absolutecinema.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.CreateMovieDto;
-import org.example.absolutecinema.dto.IdMovieDto;
 import org.example.absolutecinema.dto.InfoMovieDto;
 import org.example.absolutecinema.service.MovieService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,13 +23,13 @@ public class AdminMovieRestController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> addMovie(@RequestBody CreateMovieDto movieDto) {
-        IdMovieDto createdMovieDto = movieService.createMovie(movieDto);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+    public ResponseEntity<InfoMovieDto> addMovie(@RequestBody CreateMovieDto dto) {
+        InfoMovieDto createdDto = movieService.create(dto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdMovieDto.id())
+                .buildAndExpand(createdDto.id())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(createdDto);
     }
 }
