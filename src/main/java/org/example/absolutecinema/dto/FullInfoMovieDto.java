@@ -11,5 +11,6 @@ public record FullInfoMovieDto(Long id,
                                String genre,
                                String description,
                                int duration,
-                               String image) {
+                               String image,
+                               String country) {
 }

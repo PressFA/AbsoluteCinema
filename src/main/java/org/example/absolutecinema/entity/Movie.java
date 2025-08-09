@@ -26,5 +26,6 @@ public class Movie {
     private int duration;
     @Column(nullable = false)
     private String image;
-
+    @Column(nullable = false)
+    private String country;
 }

@@ -15,10 +15,12 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     List<InfoMovieDto> findProjectedBy();
 
     @Query("""
-    select distinct m.id, m.title, m.year, m.image
+    select m.id, m.title, m.year, m.image
     from Session s
     join s.movie m
     where s.startTime > current_timestamp
+    group by m.id, m.title, m.year, m.image
+    order by min(s.startTime)
     """)
     Page<InfoMovieDto> findFutureSessionMovies(Pageable pageable);
 

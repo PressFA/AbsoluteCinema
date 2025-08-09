@@ -42,6 +42,7 @@ public class MovieService {
                 .description(dto.description())
                 .duration(dto.duration())
                 .image(dto.image())
+                .country(dto.country())
                 .build();
 
         Movie saved = movieRepository.save(created);

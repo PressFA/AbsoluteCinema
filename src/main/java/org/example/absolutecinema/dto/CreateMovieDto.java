@@ -10,5 +10,6 @@ public record CreateMovieDto(String title,
                              String genre,
                              String description,
                              int duration,
-                             String image) {
+                             String image,
+                             String country) {
 }
