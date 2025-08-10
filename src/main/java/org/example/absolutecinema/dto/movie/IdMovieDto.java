@@ -1,4 +1,4 @@
-package org.example.absolutecinema.dto;
+package org.example.absolutecinema.dto.movie;
 
 /**
  * DTO, содержащий только идентификатор фильма.

@@ -1,8 +1,8 @@
-package org.example.absolutecinema.controller;
+package org.example.absolutecinema.controller.movie;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.CreateMovieDto;
-import org.example.absolutecinema.dto.InfoMovieDto;
+import org.example.absolutecinema.dto.movie.CreateMovieDto;
+import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.service.MovieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +26,8 @@ public class AdminMovieRestController {
     public ResponseEntity<InfoMovieDto> addMovie(@RequestBody CreateMovieDto dto) {
         InfoMovieDto createdDto = movieService.create(dto);
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
+                .fromCurrentContextPath()
+                .path("/api/v1/movies/{id}")
                 .buildAndExpand(createdDto.id())
                 .toUri();
         return ResponseEntity.created(location).body(createdDto);

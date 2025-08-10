@@ -26,3 +26,14 @@ INSERT INTO sessions (movie_id, hall_id, start_time, end_time, price) VALUES
 (1, 1, '2025-09-05 19:00:00', '2025-09-05 21:28:00', 300),
 (2, 2, '2025-09-10 20:00:00', '2025-09-10 22:16:00', 300),
 (3, 1, '2025-09-15 18:30:00', '2025-09-15 21:19:00', 300);
+
+--changeset pressf:3
+UPDATE sessions
+SET start_time = '2025-08-10 23:30:00.000000',
+    end_time = '2025-08-11 01:06:00.000000'
+WHERE id = 2;
+
+UPDATE sessions
+SET start_time = '2025-08-10 23:45:00.000000',
+    end_time = '2025-08-11 02:34:00.000000'
+WHERE id = 3;

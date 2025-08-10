@@ -1,4 +1,4 @@
-package org.example.absolutecinema.dto;
+package org.example.absolutecinema.dto.session;
 
 public record MovieForSessionDto(Long id,
                                  String title,

@@ -1,10 +1,10 @@
 package org.example.absolutecinema.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.CreateMovieDto;
-import org.example.absolutecinema.dto.FullInfoMovieDto;
-import org.example.absolutecinema.dto.IdMovieDto;
-import org.example.absolutecinema.dto.InfoMovieDto;
+import org.example.absolutecinema.dto.movie.CreateMovieDto;
+import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
+import org.example.absolutecinema.dto.movie.IdMovieDto;
+import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.entity.Movie;
 import org.example.absolutecinema.repository.MovieRepository;
 import org.springframework.data.domain.Page;

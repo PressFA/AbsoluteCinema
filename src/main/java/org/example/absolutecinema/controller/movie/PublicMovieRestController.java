@@ -1,9 +1,9 @@
-package org.example.absolutecinema.controller;
+package org.example.absolutecinema.controller.movie;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.FullInfoMovieDto;
-import org.example.absolutecinema.dto.IdMovieDto;
-import org.example.absolutecinema.dto.InfoMovieDto;
+import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
+import org.example.absolutecinema.dto.movie.IdMovieDto;
+import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.service.MovieService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,11 +1,13 @@
-package org.example.absolutecinema.controller;
+package org.example.absolutecinema.controller.session;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.SessionDto;
+import org.example.absolutecinema.dto.session.IdSessionDto;
+import org.example.absolutecinema.dto.session.SessionDto;
 import org.example.absolutecinema.service.SessionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +25,10 @@ public class PublicSessionRestController {
     @GetMapping("/future")
     public Page<SessionDto> getFutureSessions(Pageable pageable) {
         return sessionService.fetchFutureSessions(pageable);
+    }
+
+    @GetMapping("/{id}")
+    public SessionDto getSessionById(@PathVariable Long id) {
+        return sessionService.fetchSessionById(new IdSessionDto(id));
     }
 }

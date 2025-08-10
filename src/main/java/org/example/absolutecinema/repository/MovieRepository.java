@@ -1,7 +1,7 @@
 package org.example.absolutecinema.repository;
 
-import org.example.absolutecinema.dto.FullInfoMovieDto;
-import org.example.absolutecinema.dto.InfoMovieDto;
+import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
+import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.entity.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
