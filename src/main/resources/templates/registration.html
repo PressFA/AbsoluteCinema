@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+</head>
+<body>
+    <fieldset>
+        <legend>Регистрация</legend>
+        <form id="registrationForm">
+            <p>
+                <label for="username">Логин:</label>
+                <input type="email" name="username" id="username" placeholder="Введите почту">
+            </p>
+            <p>
+                <label for="name">Имя:</label>
+                <input type="text" name="name" id="name" placeholder="Введите настоящее имя">
+            </p>
+            <p>
+                <label for="password">Пароль:</label>
+                <input type="password" name="password" id="password" placeholder="Введите пароль">
+            </p>
+            <p>
+                <button type="submit">Зарегистрироваться</button>
+            </p>
+        </form>
+        <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+    </fieldset>
+    <script src="/js/registration.js"></script>
+</body>
+</html>

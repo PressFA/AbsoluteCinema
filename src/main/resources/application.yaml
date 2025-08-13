@@ -10,3 +10,5 @@ spring:
       format_sql: true
       hbm2ddl.auto: validate
     open-in-view: false
+  config:
+    import: classpath:public-urls.properties

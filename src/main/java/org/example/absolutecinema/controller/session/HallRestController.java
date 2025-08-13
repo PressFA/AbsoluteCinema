@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/halls")
+@RequestMapping("/api/v1/admin/halls")
 public class HallRestController {
     private final HallService hallService;
 
