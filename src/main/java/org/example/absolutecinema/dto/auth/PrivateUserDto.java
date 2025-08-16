@@ -1,4 +1,4 @@
-package org.example.absolutecinema.dto.user;
+package org.example.absolutecinema.dto.auth;
 
 import lombok.Builder;
 

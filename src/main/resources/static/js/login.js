@@ -6,18 +6,20 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         password: document.getElementById("password").value
     };
 
-    fetch("/api/v1/users/login", {
+    fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData)
     })
         .then(response => {
+            const data = response.json()
+
             if (response.ok) {
-                console.log("Вход");
+                console.log("Вход успешный");
             } else if (response.status === 401) {
-                alert("Неверный логин или пароль");
+                alert(data.message);
             } else {
-                alert("Ошибка входа");
+                alert("Ошибка входа: " + (data.message || "неизвестная ошибка"));
             }
         })
         .catch(err => console.error("Ошибка:", err));

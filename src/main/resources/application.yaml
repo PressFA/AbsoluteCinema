@@ -11,4 +11,6 @@ spring:
       hbm2ddl.auto: validate
     open-in-view: false
   config:
-    import: classpath:public-urls.properties
+    import:
+      - classpath:public-urls.properties
+      - classpath:token.properties

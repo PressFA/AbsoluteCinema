@@ -21,33 +21,33 @@ public class UserRestController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/me")
-    public InfoUserDto getUser(@SessionAttribute("userId") Long userId) {
-        return userService.getInfoUserById(new IdUserDto(userId));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<InfoUserDto> authenticationUser(@RequestBody PrivateUserDto dto,
-                                                          HttpSession session) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
-        );
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        InfoUserDto user = userService.getInfoUserByUsername(new UsernameUserDto(dto.username()));
-        session.setAttribute("userId", user.id());
-
-        return ResponseEntity.ok()
-                .location(URI.create("/api/v1/users/me"))
-                .body(user);
-    }
-
-    @PostMapping("/registration")
-    public ResponseEntity<Void> authorizationUser(@RequestBody CreateUserDto dto) {
-        if (userService.create(dto) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
-    }
+//    @GetMapping("/me")
+//    public InfoUserDto getUser(@SessionAttribute("userId") Long userId) {
+//        return userService.getInfoUserById(new IdUserDto(userId));
+//    }
+//
+//    @PostMapping("/login")
+//    public ResponseEntity<InfoUserDto> authenticationUser(@RequestBody PrivateUserDto dto,
+//                                                          HttpSession session) {
+//        Authentication auth = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+//
+//        InfoUserDto user = userService.getInfoUserByUsername(new UsernameUserDto(dto.username()));
+//        session.setAttribute("userId", user.id());
+//
+//        return ResponseEntity.ok()
+//                .location(URI.create("/api/v1/users/me"))
+//                .body(user);
+//    }
+//
+//    @PostMapping("/registration")
+//    public ResponseEntity<Void> authorizationUser(@RequestBody CreateUserDto dto) {
+//        if (userService.create(dto) != null) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//        } else {
+//            return ResponseEntity.status(HttpStatus.CREATED).build();
+//        }
+//    }
 }

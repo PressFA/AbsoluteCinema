@@ -1,10 +1,10 @@
-package org.example.absolutecinema.controller.user;
+package org.example.absolutecinema.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class UserController {
+public class PageController {
     @GetMapping("/login")
     public String authentication() {
         return "login";
