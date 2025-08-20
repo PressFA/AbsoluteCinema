@@ -1,8 +1,9 @@
 package org.example.absolutecinema.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.absolutecinema.dto.seat.RespInfoSeatDto;
 import org.example.absolutecinema.dto.session.CreateSessionDto;
-import org.example.absolutecinema.dto.session.IdSessionDto;
+import org.example.absolutecinema.dto.seat.ReqInfoSeatDto;
 import org.example.absolutecinema.dto.session.SessionDto;
 import org.example.absolutecinema.dto.session.UpdateSessionDto;
 import org.example.absolutecinema.entity.Hall;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +28,7 @@ public class SessionService {
     private final SessionRepository sessionRepository;
     private final MovieRepository movieRepository;
     private final HallRepository hallRepository;
+    private final SeatService seatService;
 
     public Page<SessionDto> fetchTodaySessions(Pageable pageable) {
         LocalDate today = LocalDate.now();
@@ -39,9 +42,18 @@ public class SessionService {
         return sessionRepository.findAllByStartTimeFuture(pageable);
     }
 
-    public SessionDto fetchSessionById(IdSessionDto dto) {
-        return sessionRepository.findProjectedById(dto.id())
+    public SessionDto fetchSessionDtoById(Long id) {
+        return sessionRepository.findProjectedById(id)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
+    }
+
+    public Session fetchSessionById(Long id) {
+        return sessionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+    }
+
+    public List<RespInfoSeatDto> fetchSeats(ReqInfoSeatDto dto) {
+        return seatService.fetchSeatsForSession(dto);
     }
 
     @Transactional

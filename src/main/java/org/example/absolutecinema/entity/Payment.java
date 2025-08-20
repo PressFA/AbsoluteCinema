@@ -18,7 +18,7 @@ public class Payment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id", nullable = false)
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,4 +27,7 @@ public class Payment {
     private BigDecimal amount;
     @Column(name = "payment_time", nullable = false)
     private LocalDateTime paymentTime;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private PaymentType type;
 }

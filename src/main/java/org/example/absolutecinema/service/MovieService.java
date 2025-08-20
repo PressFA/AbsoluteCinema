@@ -3,7 +3,6 @@ package org.example.absolutecinema.service;
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.movie.CreateMovieDto;
 import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
-import org.example.absolutecinema.dto.movie.IdMovieDto;
 import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.entity.Movie;
 import org.example.absolutecinema.repository.MovieRepository;
@@ -28,8 +27,8 @@ public class MovieService {
         return movieRepository.findFutureSessionMovies(pageable);
     }
 
-    public FullInfoMovieDto findMovieById(IdMovieDto idMovieDto) {
-        return movieRepository.findProjectedById(idMovieDto.id())
+    public FullInfoMovieDto findMovieById(Long id) {
+        return movieRepository.findProjectedById(id)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
     }
 

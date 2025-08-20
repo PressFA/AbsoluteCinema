@@ -57,7 +57,7 @@ public class AuthService {
         }
 
         try {
-            userService.createUser(userDto);
+            userService.create(userDto);
         } catch (TransactionSystemException ex) {
             // можно прологировать
             return new ResponseEntity<>(

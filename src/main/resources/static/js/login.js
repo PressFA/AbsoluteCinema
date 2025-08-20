@@ -15,7 +15,7 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
             const data = response.json()
 
             if (response.ok) {
-                console.log("Вход успешный");
+                console.log("Успешный вход");
             } else if (response.status === 401) {
                 alert(data.message);
             } else {

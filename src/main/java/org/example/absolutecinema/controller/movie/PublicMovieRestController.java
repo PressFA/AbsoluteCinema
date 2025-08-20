@@ -2,7 +2,6 @@ package org.example.absolutecinema.controller.movie;
 
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
-import org.example.absolutecinema.dto.movie.IdMovieDto;
 import org.example.absolutecinema.dto.movie.InfoMovieDto;
 import org.example.absolutecinema.service.MovieService;
 import org.springframework.data.domain.Page;
@@ -25,6 +24,6 @@ public class PublicMovieRestController {
 
     @GetMapping("/{id}")
     public FullInfoMovieDto getMovie(@PathVariable Long id) {
-        return movieService.findMovieById(new IdMovieDto(id));
+        return movieService.findMovieById(id);
     }
 }

@@ -14,9 +14,4 @@ public class PageController {
     public String authorization() {
         return "registration";
     }
-
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
 }

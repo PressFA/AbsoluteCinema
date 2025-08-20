@@ -46,6 +46,10 @@ public class JwtService {
         return getClaimsFromJwtToken(jwtToken).getSubject();
     }
 
+    public Long getUserIdFromJwtToken(String jwtToken) {
+        return getClaimsFromJwtToken(jwtToken).get("userId", Long.class);
+    }
+
     private Claims getClaimsFromJwtToken(String jwtToken) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.parser()
