@@ -5,7 +5,7 @@ import org.example.absolutecinema.dto.auth.JwtPayloadDto;
 import org.example.absolutecinema.dto.auth.JwtTokenDto;
 import org.example.absolutecinema.dto.auth.PrivateUserDto;
 import org.example.absolutecinema.dto.user.CreateUserDto;
-import org.example.absolutecinema.exception.AuthError;
+import org.example.absolutecinema.exception.AppError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,38 +30,38 @@ public class AuthService {
         } catch (BadCredentialsException ex) {
             // можно прологировать
             return new ResponseEntity<>(
-                    new AuthError(HttpStatus.UNAUTHORIZED.value(), "Неверный логин или пароль"),
+                    new AppError(HttpStatus.UNAUTHORIZED.value(), "Неверный логин или пароль"),
                     HttpStatus.UNAUTHORIZED // 401
             );
         } catch (UsernameNotFoundException ex) {
             // можно прологировать
             return new ResponseEntity<>(
-                    new AuthError(HttpStatus.UNAUTHORIZED.value(), "Пользователь не найден"),
+                    new AppError(HttpStatus.UNAUTHORIZED.value(), "Пользователь не найден"),
                     HttpStatus.UNAUTHORIZED // 401
             );
         }
 
-        JwtPayloadDto payloadDto = userService.getJwtPayloadByUsername(userDto.username());
+        JwtPayloadDto payloadDto = userService.fetchJwtPayloadByUsername(userDto.username());
         String token = jwtService.generateToken(payloadDto);
 
         return ResponseEntity.ok(new JwtTokenDto(token));
     }
 
     public ResponseEntity<?> registration(CreateUserDto userDto) {
-        if (userService.getUserByUsername(userDto.username()).isPresent()) {
+        if (userService.fetchUserByUsername(userDto.username()).isPresent()) {
             // можно прологировать
             return new ResponseEntity<>(
-                    new AuthError(HttpStatus.CONFLICT.value(), "Пользователь с указанной почтой уже существует"),
+                    new AppError(HttpStatus.CONFLICT.value(), "Пользователь с указанной почтой уже существует"),
                     HttpStatus.CONFLICT // 409
             );
         }
 
         try {
-            userService.create(userDto);
+            userService.createUser(userDto);
         } catch (TransactionSystemException ex) {
             // можно прологировать
             return new ResponseEntity<>(
-                    new AuthError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Не удалось зарегестрировать пользователя"),
+                    new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Не удалось зарегестрировать пользователя"),
                     HttpStatus.INTERNAL_SERVER_ERROR // 500
             );
         }

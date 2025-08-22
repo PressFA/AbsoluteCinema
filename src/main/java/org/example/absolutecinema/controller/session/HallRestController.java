@@ -15,6 +15,16 @@ import java.util.List;
 public class HallRestController {
     private final HallService hallService;
 
+    /**
+     * Страница: "Админка → Создание новой сессии"
+     * <p>
+     * Использование:<br>
+     * - Вызывается при открытии формы создания новой сессии.<br>
+     * - Возвращает список всех залов кинотеатра (FullInfoHallDto),
+     *   который используется на фронте для выбора зала, в котором будет проводиться сессия.
+     * <p>
+     * Endpoint: GET /api/v1/admin/halls
+     */
     @GetMapping
     public List<FullInfoHallDto> getAllHalls() {
         return hallService.fetchAllHalls();

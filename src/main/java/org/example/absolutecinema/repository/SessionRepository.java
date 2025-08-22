@@ -1,5 +1,6 @@
 package org.example.absolutecinema.repository;
 
+import org.example.absolutecinema.dto.session.CheckTimeDto;
 import org.example.absolutecinema.dto.session.SessionDto;
 import org.example.absolutecinema.entity.Session;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
@@ -49,4 +51,12 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     where s.id = :id
     """)
     Optional<SessionDto> findProjectedById(@Param("id") Long id);
+
+    @Query("""
+    select new org.example.absolutecinema.dto.session.CheckTimeDto(
+        s.startTime, s.endTime)
+    from Session s
+    where s.hall.id = :hallId and s.startTime > current_timestamp
+    """)
+    List<CheckTimeDto> findCheckTimesByHallId(@Param("hallId") Long hallId);
 }

@@ -2,6 +2,7 @@ package org.example.absolutecinema.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.hall.FullInfoHallDto;
+import org.example.absolutecinema.entity.Hall;
 import org.example.absolutecinema.repository.HallRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,5 +17,10 @@ public class HallService {
 
     public List<FullInfoHallDto> fetchAllHalls() {
         return hallRepository.findProjectedBy();
+    }
+
+    public Hall fetchHallById(Long id) {
+        return hallRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hall not found"));
     }
 }

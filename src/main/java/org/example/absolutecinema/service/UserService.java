@@ -3,9 +3,13 @@ package org.example.absolutecinema.service;
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.auth.JwtPayloadDto;
 import org.example.absolutecinema.dto.payment.CreatePaymentDto;
+import org.example.absolutecinema.dto.payment.PaymentDto;
+import org.example.absolutecinema.dto.payment.RespPaymentDto;
 import org.example.absolutecinema.dto.user.*;
 import org.example.absolutecinema.entity.*;
 import org.example.absolutecinema.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,17 +30,65 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<InfoForAdminDto> getInfoForAdmin() {
+    public List<InfoForAdminDto> fetchInfoForAdmin() {
         return userRepository.findByRoleNot(Role.ADMIN);
     }
 
-    public InfoUserDto getInfoUserById(Long id) {
+    public InfoUserDto fetchInfoUserById(Long id) {
         return userRepository.findInfoUserById(id);
     }
 
     public User fetchUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public Page<RespPaymentDto> fetchRespPaymentsDtoByUserId(Long userId, Pageable pageable) {
+        Page<PaymentDto> payments = paymentService.fetchAllPaymentsDtoByUserId(userId, pageable);
+
+        return payments.map(payment -> {
+            String description;
+            boolean incoming;
+
+            switch (payment.type()) {
+                case TOP_UP -> {
+                    description = "Пополнение баланса";
+                    incoming = true;
+                }
+                case REFUND -> {
+                    description = "Возврат за билет: " + payment.ticketDto().title()
+                            + " (" + payment.ticketDto().year() + ")";
+                    incoming = true;
+                }
+                case FULL_PAYMENT -> {
+                    description = "Полная оплата билета: " + payment.ticketDto().title()
+                            + " (" + payment.ticketDto().year() + ")";
+                    incoming = false;
+                }
+                case FINAL_PAYMENT -> {
+                    description = "Доплата за билет: " + payment.ticketDto().title()
+                            + " (" + payment.ticketDto().year() + ")";
+                    incoming = false;
+                }
+                case RESERVATION -> {
+                    description = "Бронь билета: " + payment.ticketDto().title()
+                            + " (" + payment.ticketDto().year() + ")";
+                    incoming = false;
+                }
+                default -> {
+                    description = "Транзакция";
+                    incoming = false;
+                }
+            }
+
+            return new RespPaymentDto(
+                    payment.paymentId(),
+                    description,
+                    incoming,
+                    payment.amount(),
+                    payment.paymentTime()
+            );
+        });
     }
 
     @Transactional
@@ -60,9 +112,19 @@ public class UserService implements UserDetailsService {
                 .amount(amount)
                 .type(PaymentType.TOP_UP)
                 .build();
-        paymentService.create(dto);
+        paymentService.createPayment(dto);
 
         return new InfoUserDto(user.getId(), user.getUsername(), user.getBalance());
+    }
+
+    @Transactional
+    public void refundTicketMoneyToUser(CreatePaymentDto dto) {
+        User user = dto.user();
+
+        user.setBalance(user.getBalance().add(dto.amount()));
+        userRepository.save(user);
+
+        paymentService.createPayment(dto);
     }
 
     @Transactional
@@ -72,7 +134,7 @@ public class UserService implements UserDetailsService {
         user.setBalance(user.getBalance().subtract(dto.amount()));
         userRepository.save(user);
 
-        paymentService.create(dto);
+        paymentService.createPayment(dto);
     }
 
     // Для Spring Security
@@ -92,20 +154,19 @@ public class UserService implements UserDetailsService {
     }
 
     // Для AuthService
-    public JwtPayloadDto getJwtPayloadByUsername(String username) {
+    public JwtPayloadDto fetchJwtPayloadByUsername(String username) {
         return userRepository.findJwtPayloadByUsername(username);
     }
 
     // Для AuthService
-    public Optional<User> getUserByUsername(String username) {
+    public Optional<User> fetchUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     // Для AuthService
     @Transactional
-    public User create(CreateUserDto dto) {
-        return userRepository.save(
-                User.builder()
+    public void createUser(CreateUserDto dto) {
+        userRepository.save(User.builder()
                         .username(dto.username())
                         .name(dto.name())
                         .password(passwordEncoder.encode(dto.password()))

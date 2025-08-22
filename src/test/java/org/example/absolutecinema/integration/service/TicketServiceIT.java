@@ -23,6 +23,6 @@ public class TicketServiceIT {
 
         System.out.println(userService.depositBalance(userId, BigDecimal.valueOf(500)));
 
-        System.out.println(ticketService.create(userId, ticketDto));
+        System.out.println(ticketService.createReservation(userId, ticketDto));
     }
 }

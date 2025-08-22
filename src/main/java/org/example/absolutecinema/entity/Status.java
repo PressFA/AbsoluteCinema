@@ -1,5 +1,7 @@
 package org.example.absolutecinema.entity;
 
 public enum Status {
-    RESERVATION, PAID
+    RESERVED, // Бронь билета
+    PURCHASED, // Покупка билета
+    REFUNDED // Возврат билета
 }

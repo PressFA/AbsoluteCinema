@@ -19,21 +19,26 @@ import java.util.List;
 public class MovieService {
     private final MovieRepository movieRepository;
 
-    public List<InfoMovieDto> findAllMovies() {
+    public List<InfoMovieDto> fetchAllMovies() {
         return movieRepository.findProjectedBy();
     }
 
-    public Page<InfoMovieDto> findAllTheatersMovies(Pageable pageable) {
+    public Page<InfoMovieDto> fetchAllTheatersMovies(Pageable pageable) {
         return movieRepository.findFutureSessionMovies(pageable);
     }
 
-    public FullInfoMovieDto findMovieById(Long id) {
+    public FullInfoMovieDto fetchFullInfoMovieById(Long id) {
         return movieRepository.findProjectedById(id)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
     }
 
+    public Movie fetchMovieById(Long id) {
+        return movieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movie not found"));
+    }
+
     @Transactional
-    public InfoMovieDto create(CreateMovieDto dto) {
+    public InfoMovieDto createMovie(CreateMovieDto dto) {
         Movie created = Movie.builder()
                 .title(dto.title())
                 .year(dto.year())
@@ -53,6 +58,4 @@ public class MovieService {
                 .image(saved.getImage())
                 .build();
     }
-
-
 }

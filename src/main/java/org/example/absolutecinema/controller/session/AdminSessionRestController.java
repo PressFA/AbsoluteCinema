@@ -2,14 +2,10 @@ package org.example.absolutecinema.controller.session;
 
 import lombok.RequiredArgsConstructor;
 import org.example.absolutecinema.dto.session.CreateSessionDto;
-import org.example.absolutecinema.dto.session.SessionDto;
 import org.example.absolutecinema.dto.session.UpdateSessionDto;
 import org.example.absolutecinema.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,20 +13,35 @@ import java.net.URI;
 public class AdminSessionRestController {
     private final SessionService sessionService;
 
+    /**
+     * Страница: "Создание новой сессии" (форма)
+     * <p>
+     * Использование:<br>
+     * - Администратор открывает форму для добавления новой сессии.<br>
+     * - Заполняет поля (фильм, дата, время, цена, зал и т.п.).<br>
+     * - Отправляет форму → создается новая сессия в БД.
+     * <p>
+     * Endpoint: POST /api/v1/admin/sessions
+     */
     @PostMapping
-    public ResponseEntity<SessionDto> addSession(@RequestBody CreateSessionDto dto) {
-        SessionDto createdDto = sessionService.create(dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/v1/sessions/{id}")
-                .buildAndExpand(createdDto.id())
-                .toUri();
-        return ResponseEntity.created(location).body(createdDto);
+    public ResponseEntity<?> addSession(@RequestBody CreateSessionDto dto) {
+        return sessionService.createSession(dto);
     }
 
+    /**
+     * Страница: "Карточка конкретной сессии" → кнопка "Обновить" (AdminVersion)<br>
+     * Страница: "Форма обновления сессии"
+     * <p>
+     * Использование:<br>
+     * - На странице конкретной сессии у админа доступна кнопка "Обновить".<br>
+     * - При клике его перебрасывает на страницу формы, где уже подставлены текущие данные сеанса.<br>
+     * - Админ редактирует и сохраняет изменения.<br>
+     * - Сессия обновляется в БД.
+     * <p>
+     * Endpoint: PUT /api/v1/admin/sessions
+     */
     @PutMapping
-    public ResponseEntity<SessionDto> updateSession(@RequestBody UpdateSessionDto dto) {
-        SessionDto updatedDto = sessionService.update(dto);
-        return ResponseEntity.ok().body(updatedDto);
+    public ResponseEntity<?> updateSession(@RequestBody UpdateSessionDto dto) {
+        return sessionService.updateSession(dto);
     }
 }
