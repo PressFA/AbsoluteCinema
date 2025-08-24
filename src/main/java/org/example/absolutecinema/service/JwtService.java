@@ -3,6 +3,7 @@ package org.example.absolutecinema.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.auth.JwtPayloadDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class JwtService {
     @Value("${jwt.secret}")
@@ -33,21 +35,28 @@ public class JwtService {
         // Конец жизни токена
         Date expDate = new Date(iatDate.getTime() + jwtLifetime.toMillis());
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .claims(claims)
                 .subject(payloadDto.username())
                 .issuedAt(iatDate)
                 .expiration(expDate)
                 .signWith(key)
                 .compact();
+
+        log.info("JWT токен сгенерирован для пользователя {}", payloadDto.username());
+        return token;
     }
 
     public String getUsernameFromJwtToken(String jwtToken) {
-        return getClaimsFromJwtToken(jwtToken).getSubject();
+        String username = getClaimsFromJwtToken(jwtToken).getSubject();
+        log.trace("Username, извлечённый из JWT токена: {}", username);
+        return username;
     }
 
     public Long getUserIdFromJwtToken(String jwtToken) {
-        return getClaimsFromJwtToken(jwtToken).get("userId", Long.class);
+        Long userId = getClaimsFromJwtToken(jwtToken).get("userId", Long.class);
+        log.trace("UserId, извлечённый из JWT токена: {}", userId);
+        return userId;
     }
 
     private Claims getClaimsFromJwtToken(String jwtToken) {

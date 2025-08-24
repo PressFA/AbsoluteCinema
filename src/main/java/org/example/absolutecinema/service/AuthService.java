@@ -1,6 +1,7 @@
 package org.example.absolutecinema.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.auth.JwtPayloadDto;
 import org.example.absolutecinema.dto.auth.JwtTokenDto;
 import org.example.absolutecinema.dto.auth.PrivateUserDto;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -25,31 +27,42 @@ public class AuthService {
     public ResponseEntity<?> login(PrivateUserDto userDto) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDto.username(), userDto.password())
+                    new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword())
             );
+            log.info("Пользователь {} успешно аутентифицирован", userDto.getUsername());
         } catch (BadCredentialsException ex) {
-            // можно прологировать
+            log.warn("Неверный логин или пароль для пользователя {}", userDto.getUsername());
             return new ResponseEntity<>(
                     new AppError(HttpStatus.UNAUTHORIZED.value(), "Неверный логин или пароль"),
                     HttpStatus.UNAUTHORIZED // 401
             );
         } catch (UsernameNotFoundException ex) {
-            // можно прологировать
+            log.warn("Пользователь {} не найден", userDto.getUsername());
             return new ResponseEntity<>(
                     new AppError(HttpStatus.UNAUTHORIZED.value(), "Пользователь не найден"),
                     HttpStatus.UNAUTHORIZED // 401
             );
         }
 
-        JwtPayloadDto payloadDto = userService.fetchJwtPayloadByUsername(userDto.username());
+        JwtPayloadDto payloadDto;
+        try {
+            payloadDto = userService.fetchJwtPayloadByUsername(userDto.getUsername());
+        } catch (RuntimeException ex) {
+            log.error("Пользователь c указанной почтой {} не найден", userDto.getUsername(), ex);
+            return new ResponseEntity<>(
+                    new AppError(HttpStatus.NOT_FOUND.value(), "Пользователь c указанной почтой не найден"),
+                    HttpStatus.NOT_FOUND
+            );
+        }
         String token = jwtService.generateToken(payloadDto);
+        log.info("JWT токен успешно сгенерирован для пользователя {}", userDto.getUsername());
 
         return ResponseEntity.ok(new JwtTokenDto(token));
     }
 
     public ResponseEntity<?> registration(CreateUserDto userDto) {
-        if (userService.fetchUserByUsername(userDto.username()).isPresent()) {
-            // можно прологировать
+        if (userService.fetchUserByUsername(userDto.getUsername()).isPresent()) {
+            log.warn("Попытка регистрации пользователя с уже существующей почтой: {}", userDto.getUsername());
             return new ResponseEntity<>(
                     new AppError(HttpStatus.CONFLICT.value(), "Пользователь с указанной почтой уже существует"),
                     HttpStatus.CONFLICT // 409
@@ -58,10 +71,11 @@ public class AuthService {
 
         try {
             userService.createUser(userDto);
+            log.info("Пользователь {} успешно зарегистрирован", userDto.getUsername());
         } catch (TransactionSystemException ex) {
-            // можно прологировать
+            log.error("Не удалось зарегистрировать пользователя {}", userDto.getUsername(), ex);
             return new ResponseEntity<>(
-                    new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Не удалось зарегестрировать пользователя"),
+                    new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Не удалось зарегистрировать пользователя"),
                     HttpStatus.INTERNAL_SERVER_ERROR // 500
             );
         }

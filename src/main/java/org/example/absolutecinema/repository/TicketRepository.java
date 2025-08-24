@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("""
@@ -30,7 +31,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     from Ticket t
     where t.id = :id
     """)
-    TicketDto findTicketDtoById(@Param("id") Long id);
+    Optional<TicketDto> findTicketById(@Param("id") Long id);
 
     @Query("""
     select new org.example.absolutecinema.dto.ticket.TicketDto(
@@ -50,7 +51,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     from Ticket t
     where t.user.id = :userId and t.session.startTime > CURRENT_TIMESTAMP
     """)
-    List<TicketDto> findActiveTicketDtoByUserId(@Param("userId") Long userId);
+    List<TicketDto> findActiveTicketsByUserId(@Param("userId") Long userId);
 
-    Ticket findTicketBySessionAndSeatAndUserIsNullAndStatus(Session session, Seat seat, Status status);
+    Optional<Ticket> findTicketBySessionAndSeatAndUserIsNullAndStatus(Session session, Seat seat, Status status);
 }

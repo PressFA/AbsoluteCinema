@@ -24,9 +24,9 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     join s.movie m
     where s.startTime >= :startOfDay and s.startTime < :startOfNextDay
     """)
-    Page<SessionDto> findAllByStartTimeToday(Pageable pageable,
-                                             @Param("startOfDay") LocalDateTime startOfDay,
-                                             @Param("startOfNextDay") LocalDateTime startOfNextDay);
+    Page<SessionDto> findSessionsByStartTimeToday(Pageable pageable,
+                                                  @Param("startOfDay") LocalDateTime startOfDay,
+                                                  @Param("startOfNextDay") LocalDateTime startOfNextDay);
 
     @Query("""
     select new org.example.absolutecinema.dto.session.SessionDto(
@@ -38,7 +38,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     join s.movie m
     where s.startTime > current_timestamp
     """)
-    Page<SessionDto> findAllByStartTimeFuture(Pageable pageable);
+    Page<SessionDto> findSessionsByStartTimeFuture(Pageable pageable);
 
     @Query("""
     select new org.example.absolutecinema.dto.session.SessionDto(
@@ -50,7 +50,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     join s.movie m
     where s.id = :id
     """)
-    Optional<SessionDto> findProjectedById(@Param("id") Long id);
+    Optional<SessionDto> findSessionById(@Param("id") Long id);
 
     @Query("""
     select new org.example.absolutecinema.dto.session.CheckTimeDto(

@@ -1,16 +1,16 @@
 package org.example.absolutecinema.controller.movie;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.movie.FullInfoMovieDto;
-import org.example.absolutecinema.dto.movie.InfoMovieDto;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.service.MovieService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/movies")
@@ -31,7 +31,8 @@ public class PublicMovieRestController {
      * Endpoint: GET /api/v1/movies?page={page}&size={size}&sort={field}
      */
     @GetMapping
-    public Page<InfoMovieDto> getTheatersMovies(Pageable pageable) {
+    public ResponseEntity<?> getTheatersMovies(Pageable pageable) {
+        log.info("Запрос фильмов в прокате, pageable={}", pageable);
         return movieService.fetchAllTheatersMovies(pageable);
     }
 
@@ -47,7 +48,8 @@ public class PublicMovieRestController {
      * Endpoint: GET /api/v1/movies/{id}
      */
     @GetMapping("/{id}")
-    public FullInfoMovieDto getMovie(@PathVariable Long id) {
+    public ResponseEntity<?> getMovie(@PathVariable Long id) {
+        log.info("Запрос информации о фильме с id={}", id);
         return movieService.fetchFullInfoMovieById(id);
     }
 }

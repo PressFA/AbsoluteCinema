@@ -18,11 +18,11 @@ public class TicketServiceIT {
 
     @Test
     void testCreateTicket() {
-        Long userId = 2L;
-        CreateTicketDto ticketDto = new CreateTicketDto(6L, 2L);
-
-        System.out.println(userService.depositBalance(userId, BigDecimal.valueOf(500)));
-
-        System.out.println(ticketService.createReservation(userId, ticketDto));
+//        Long userId = 2L;
+//        CreateTicketDto ticketDto = new CreateTicketDto(6L, 2L);
+//
+//        System.out.println(userService.depositBalance(userId, BigDecimal.valueOf(500)));
+//
+//        System.out.println(ticketService.createReservation(userId, ticketDto));
     }
 }

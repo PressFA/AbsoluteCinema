@@ -1,16 +1,18 @@
 package org.example.absolutecinema.controller.tickets;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.ticket.CreateTicketDto;
-import org.example.absolutecinema.dto.ticket.TicketDto;
+import org.example.absolutecinema.exception.ValidError;
 import org.example.absolutecinema.service.JwtService;
 import org.example.absolutecinema.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tickets")
@@ -30,10 +32,9 @@ public class PrivateTicketRestController {
      * Endpoint: GET /api/v1/tickets
      */
     @GetMapping
-    public List<TicketDto> getAllTickets(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
-
+    public ResponseEntity<?> getAllTickets(@RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Запрос всех билетов пользователя id={}", userId);
         return ticketService.fetchAllTicketDtoByUserId(userId);
     }
 
@@ -50,9 +51,14 @@ public class PrivateTicketRestController {
      */
     @PostMapping("/reserve")
     public ResponseEntity<?> reserveTicket(@RequestHeader("Authorization") String authHeader,
-                                           @RequestBody CreateTicketDto dto) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
+                                           @RequestBody @Validated CreateTicketDto dto,
+                                           BindingResult bindingResult) {
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Попытка бронирования билета пользователем id={}, данные: {}", userId, dto);
+        if (bindingResult.hasErrors()) {
+            log.warn("Ошибка валидации при бронировании билета: {}", bindingResult.getFieldErrors());
+            return ValidError.validationReq(bindingResult);
+        }
 
         return ticketService.createTicket(userId, dto);
     }
@@ -70,9 +76,14 @@ public class PrivateTicketRestController {
      */
     @PostMapping("/buy")
     public ResponseEntity<?> buyTicket(@RequestHeader("Authorization") String authHeader,
-                                       @RequestBody CreateTicketDto dto) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
+                                       @RequestBody @Validated CreateTicketDto dto,
+                                       BindingResult bindingResult) {
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Попытка покупки билета пользователем id={}, данные: {}", userId, dto);
+        if (bindingResult.hasErrors()) {
+            log.warn("Ошибка валидации при покупке билета: {}", bindingResult.getFieldErrors());
+            return ValidError.validationReq(bindingResult);
+        }
 
         return ticketService.createTicket(userId, dto);
     }
@@ -90,9 +101,8 @@ public class PrivateTicketRestController {
     @PostMapping("/{id}/confirm")
     public ResponseEntity<?> upgradeTicket(@RequestHeader("Authorization") String authHeader,
                                            @PathVariable("id") Long ticketId) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
-
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Подтверждение покупки забронированного билета id={} пользователем id={}", ticketId, userId);
         return ticketService.updateTicket(ticketId, userId);
     }
 
@@ -109,9 +119,8 @@ public class PrivateTicketRestController {
     @PostMapping("/{id}/refund")
     public ResponseEntity<?> refundTicket(@RequestHeader("Authorization") String authHeader,
                                           @PathVariable("id") Long ticketId) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
-
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Возврат билета id={} пользователем id={}", ticketId, userId);
         return ticketService.processTicketRefund(ticketId, userId);
     }
 }

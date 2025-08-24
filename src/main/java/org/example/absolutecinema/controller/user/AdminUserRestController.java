@@ -1,14 +1,14 @@
 package org.example.absolutecinema.controller.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.user.IdAndUserStatusDto;
-import org.example.absolutecinema.dto.user.InfoForAdminDto;
 import org.example.absolutecinema.entity.UserStatus;
 import org.example.absolutecinema.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/users")
@@ -27,7 +27,8 @@ public class AdminUserRestController {
      * Endpoint: GET /api/v1/admin/users
      */
     @GetMapping
-    public List<InfoForAdminDto> getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
+        log.info("Запрос всех пользователей (админ)");
         return userService.fetchInfoForAdmin();
     }
 
@@ -43,7 +44,8 @@ public class AdminUserRestController {
      * Endpoint: PATCH /api/v1/admin/users/{id}/ban
      */
     @PatchMapping("/{id}/ban")
-    public InfoForAdminDto banUser(@PathVariable Long id) {
+    public ResponseEntity<?> banUser(@PathVariable Long id) {
+        log.info("Блокировка пользователя id={}", id);
         return userService.banUnbanUser(new IdAndUserStatusDto(id, UserStatus.BANNED));
     }
 
@@ -59,7 +61,8 @@ public class AdminUserRestController {
      * Endpoint: PATCH /api/v1/admin/users/{id}/unban
      */
     @PatchMapping("/{id}/unban")
-    public InfoForAdminDto unbanUser(@PathVariable Long id) {
+    public ResponseEntity<?> unbanUser(@PathVariable Long id) {
+        log.info("Разблокировка пользователя id={}", id);
         return userService.banUnbanUser(new IdAndUserStatusDto(id, UserStatus.ACTIVE));
     }
 }

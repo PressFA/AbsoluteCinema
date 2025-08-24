@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HallRepository extends JpaRepository<Hall, Long> {
-    List<FullInfoHallDto> findProjectedBy();
+    List<FullInfoHallDto> findFullInfoHallsBy();
 }

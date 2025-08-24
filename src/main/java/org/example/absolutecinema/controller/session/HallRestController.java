@@ -1,14 +1,14 @@
 package org.example.absolutecinema.controller.session;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.hall.FullInfoHallDto;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.service.HallService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/halls")
@@ -26,7 +26,8 @@ public class HallRestController {
      * Endpoint: GET /api/v1/admin/halls
      */
     @GetMapping
-    public List<FullInfoHallDto> getAllHalls() {
+    public ResponseEntity<?> getAllHalls() {
+        log.info("Запрос всех залов (админ)");
         return hallService.fetchAllHalls();
     }
 }

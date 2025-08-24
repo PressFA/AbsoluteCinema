@@ -1,16 +1,16 @@
 package org.example.absolutecinema.controller.movie;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.movie.CreateMovieDto;
-import org.example.absolutecinema.dto.movie.InfoMovieDto;
+import org.example.absolutecinema.exception.ValidError;
 import org.example.absolutecinema.service.MovieService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/movies")
@@ -31,7 +31,8 @@ public class AdminMovieRestController {
      * Endpoint: GET /api/v1/admin/movies
      */
     @GetMapping
-    public List<InfoMovieDto> getAllMovie() {
+    public ResponseEntity<?> getAllMovie() {
+        log.info("Запрос всех фильмов (админ)");
         return movieService.fetchAllMovies();
     }
 
@@ -47,13 +48,16 @@ public class AdminMovieRestController {
      * Endpoint: POST /api/v1/admin/movies
      */
     @PostMapping
-    public ResponseEntity<InfoMovieDto> addMovie(@RequestBody CreateMovieDto dto) {
-        InfoMovieDto createdDto = movieService.createMovie(dto);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/v1/movies/{id}")
-                .buildAndExpand(createdDto.id())
-                .toUri();
-        return ResponseEntity.created(location).body(createdDto);
+    public ResponseEntity<?> addMovie(@RequestBody @Validated CreateMovieDto dto,
+                                      BindingResult bindingResult) {
+        log.info("Попытка добавления фильма: {}", dto.getTitle());
+        if (bindingResult.hasErrors()) {
+            log.warn("Ошибка валидации при добавлении фильма: {}", bindingResult.getFieldErrors());
+            return ValidError.validationReq(bindingResult);
+        }
+
+        ResponseEntity<?> response = movieService.createMovie(dto);
+        log.info("Фильм {} создан с статусом: {}", dto.getTitle(), response.getStatusCode());
+        return response;
     }
 }

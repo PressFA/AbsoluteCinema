@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicUrls).permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority(ADMIN.getAuthority())
-                        .anyRequest().authenticated() // все остальные запросы блокируй, пока пользователь не зарегается
+                        .anyRequest().authenticated() // все остальные запросы блокируй, пока пользователь не войдёт
                 )
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

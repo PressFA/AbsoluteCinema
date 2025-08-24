@@ -1,17 +1,19 @@
 package org.example.absolutecinema.controller.user;
 
 import lombok.RequiredArgsConstructor;
-import org.example.absolutecinema.dto.payment.RespPaymentDto;
-import org.example.absolutecinema.dto.user.*;
+import lombok.extern.slf4j.Slf4j;
+import org.example.absolutecinema.dto.payment.TopUpBalanceDto;
+import org.example.absolutecinema.exception.ValidError;
 import org.example.absolutecinema.service.JwtService;
 import org.example.absolutecinema.service.UserService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigDecimal;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -30,11 +32,10 @@ public class PrivateUserRestController {
      * Endpoint: GET /api/v1/users/me
      */
     @GetMapping("/me")
-    public InfoUserDto getUser(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        Long id = jwtService.getUserIdFromJwtToken(token);
-
-        return userService.fetchInfoUserById(id);
+    public ResponseEntity<?> getUser(@RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Запрос профиля пользователя id={}", userId);
+        return userService.fetchInfoUserById(userId);
     }
 
     /**
@@ -50,12 +51,9 @@ public class PrivateUserRestController {
     @GetMapping("/me/payments")
     public ResponseEntity<?> getPayments(@RequestHeader("Authorization") String authHeader,
                                          Pageable pageable) {
-        String token = authHeader.replace("Bearer ", "");
-        Long id = jwtService.getUserIdFromJwtToken(token);
-
-        Page<RespPaymentDto> payments = userService.fetchRespPaymentsDtoByUserId(id, pageable);
-
-        return ResponseEntity.ok(payments);
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Запрос платежей пользователя id={}, pageable={}", userId, pageable);
+        return userService.fetchRespPaymentsDtoByUserId(userId, pageable);
     }
 
     /**
@@ -70,11 +68,16 @@ public class PrivateUserRestController {
      * Endpoint: PATCH /api/v1/users/me/balance
      */
     @PatchMapping("/me/balance")
-    public InfoUserDto topUpBalance(@RequestHeader("Authorization") String authHeader,
-                                    @RequestBody BigDecimal amount) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.getUserIdFromJwtToken(token);
+    public ResponseEntity<?> topUpBalance(@RequestHeader("Authorization") String authHeader,
+                                          @RequestBody @Validated TopUpBalanceDto dto,
+                                          BindingResult bindingResult) {
+        Long userId = jwtService.getUserIdFromJwtToken(authHeader.replace("Bearer ", ""));
+        log.info("Пополнение баланса пользователя id={}, сумма={}", userId, dto.getAmount());
+        if (bindingResult.hasErrors()) {
+            log.warn("Ошибка валидации при пополнении баланса: {}", bindingResult.getFieldErrors());
+            return ValidError.validationReq(bindingResult);
+        }
 
-        return userService.depositBalance(userId, amount);
+        return userService.depositBalance(userId, dto);
     }
 }

@@ -16,5 +16,5 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     left join Ticket t on t.seat.id = s.id and t.session.id = :sessionId
     where s.hall.id = :hallId
     """)
-    List<RespInfoSeatDto> findAllSeatByHallIdAndSessionId(@Param("hallId") Long hallId, @Param("sessionId") Long sessionId);
+    List<RespInfoSeatDto> findRespInfoSeatsByHallIdAndSessionId(@Param("hallId") Long hallId, @Param("sessionId") Long sessionId);
 }

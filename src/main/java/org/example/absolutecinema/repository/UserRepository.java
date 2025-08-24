@@ -25,11 +25,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """)
     void updateStatus(@Param("id") Long userId, @Param("status")UserStatus status);
 
-    InfoForAdminDto findInfoForAdminDtoById(Long id);
+    Optional<InfoForAdminDto> findInfoForAdminDtoById(Long id);
 
     Optional<User> findByUsername(String username);
 
-    JwtPayloadDto findJwtPayloadByUsername(String username);
+    Optional<JwtPayloadDto> findJwtPayloadByUsername(String username);
 
-    InfoUserDto findInfoUserById(Long id);
+    Optional<InfoUserDto> findInfoUserById(Long id);
 }

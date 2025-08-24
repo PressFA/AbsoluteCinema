@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    List<InfoMovieDto> findProjectedBy();
+    List<InfoMovieDto> findFullInfoMovieBy();
 
     @Query("""
     select m.id, m.title, m.year, m.image
@@ -24,5 +24,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     """)
     Page<InfoMovieDto> findFutureSessionMovies(Pageable pageable);
 
-    Optional<FullInfoMovieDto> findProjectedById(Long id);
+    Optional<FullInfoMovieDto> findFullInfoMovieById(Long id);
 }

@@ -1,17 +1,18 @@
 package org.example.absolutecinema.controller.session;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.seat.ReqInfoSeatDto;
-import org.example.absolutecinema.dto.seat.RespInfoSeatDto;
-import org.example.absolutecinema.dto.session.SessionDto;
+import org.example.absolutecinema.exception.ValidError;
 import org.example.absolutecinema.service.SessionService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/sessions")
@@ -31,7 +32,8 @@ public class PublicSessionRestController {
      * Endpoint: GET /api/v1/sessions/today?page={page}&size={size}&sort={field}
      */
     @GetMapping("/today")
-    public Page<SessionDto> getTodaySessions(Pageable pageable) {
+    public ResponseEntity<?> getTodaySessions(Pageable pageable) {
+        log.info("Запрос сессий на сегодня, pageable={}", pageable);
         return sessionService.fetchTodaySessions(pageable);
     }
 
@@ -46,7 +48,8 @@ public class PublicSessionRestController {
      * Endpoint: GET /api/v1/sessions/future?page={page}&size={size}&sort={field}
      */
     @GetMapping("/future")
-    public Page<SessionDto> getFutureSessions(Pageable pageable) {
+    public ResponseEntity<?> getFutureSessions(Pageable pageable) {
+        log.info("Запрос будущих сессий, pageable={}", pageable);
         return sessionService.fetchFutureSessions(pageable);
     }
 
@@ -66,7 +69,8 @@ public class PublicSessionRestController {
      * Endpoint: GET /api/v1/sessions/{id}
      */
     @GetMapping("/{id}")
-    public SessionDto getSessionById(@PathVariable Long id) {
+    public ResponseEntity<?> getSessionById(@PathVariable Long id) {
+        log.info("Запрос информации о сессии id={}", id);
         return sessionService.fetchSessionDtoById(id);
     }
 
@@ -82,7 +86,14 @@ public class PublicSessionRestController {
      * Endpoint: GET /api/v1/sessions/seats
      */
     @GetMapping("/seats") @PreAuthorize("hasAuthority('USER')")
-    public List<RespInfoSeatDto> getSeats(@RequestBody ReqInfoSeatDto dto) {
+    public ResponseEntity<?> getSeats(@RequestBody @Validated ReqInfoSeatDto dto,
+                                      BindingResult bindingResult) {
+        log.info("Запрос мест для сессии: {}", dto);
+        if (bindingResult.hasErrors()) {
+            log.warn("Ошибка валидации при запросе мест: {}", bindingResult.getFieldErrors());
+            return ValidError.validationReq(bindingResult);
+        }
+
         return sessionService.fetchSeats(dto);
     }
 }
