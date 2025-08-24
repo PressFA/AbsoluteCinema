@@ -1,5 +1,6 @@
 package org.example.absolutecinema.repository;
 
+import org.example.absolutecinema.dto.scheduler.TicketAndUserDto;
 import org.example.absolutecinema.dto.ticket.TicketDto;
 import org.example.absolutecinema.entity.Seat;
 import org.example.absolutecinema.entity.Session;
@@ -52,6 +53,14 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     where t.user.id = :userId and t.session.startTime > CURRENT_TIMESTAMP
     """)
     List<TicketDto> findActiveTicketsByUserId(@Param("userId") Long userId);
+
+    @Query("""
+    select new org.example.absolutecinema.dto.scheduler.TicketAndUserDto(
+        t, t.user)
+    from Ticket t
+    where t.status = :status and t.expiresAt < CURRENT_TIMESTAMP
+    """)
+    List<TicketAndUserDto> findTicketsByStatusAndExpiresAt(@Param("status") Status status);
 
     Optional<Ticket> findTicketBySessionAndSeatAndUserIsNullAndStatus(Session session, Seat seat, Status status);
 }

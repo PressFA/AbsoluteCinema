@@ -3,6 +3,7 @@ package org.example.absolutecinema.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.absolutecinema.dto.payment.CreatePaymentDto;
+import org.example.absolutecinema.dto.scheduler.TicketAndUserDto;
 import org.example.absolutecinema.dto.ticket.CreateTicketDto;
 import org.example.absolutecinema.dto.ticket.TicketDto;
 import org.example.absolutecinema.entity.*;
@@ -61,6 +62,52 @@ public class TicketService {
             log.info("Свободный билет для сеанса {} и места {} не найден", session.getId(), seat.getId());
         }
         return ticket;
+    }
+
+    // Для ReservationCheck
+    public List<TicketAndUserDto> fetchTicketsByStatusAndExpiresAt() {
+        log.info("Поиск просроченных билетов со статусом RESERVED");
+        return ticketRepository.findTicketsByStatusAndExpiresAt(Status.RESERVED);
+    }
+
+    @Transactional
+    // Для ReservationCheck
+    public void taskExecution(TicketAndUserDto dto) {
+        log.info("Запрос из планировщика задач для возврата просроченной брони билета id={} пользователю id={}",
+                dto.ticket().getId(), dto.user().getId());
+
+        Ticket ticket = dto.ticket();
+        User user = dto.user();
+
+        List<Payment> payments = paymentService.fetchAllPaymentsByTicketAndUser(ticket, user);
+        if (payments.isEmpty()) {
+            log.warn("Невозможно вернуть билет id={}, у него отсутствуют транзакции", ticket.getId());
+            return;
+        }
+
+        BigDecimal totalAmount = payments.stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        CreatePaymentDto paymentDto = CreatePaymentDto.builder()
+                .ticket(ticket)
+                .user(user)
+                .amount(totalAmount)
+                .type(PaymentType.REFUND)
+                .build();
+        try {
+            userService.refundTicketMoneyToUser(paymentDto);
+            log.info("Возвращена сумма {} пользователю id={}", totalAmount, user.getId());
+        } catch (Exception e) {
+            log.error("Ошибка при возврате денег пользователю id={}", user.getId(), e);
+            return;
+        }
+
+        ticket.setUser(null);
+        ticket.setStatus(Status.REFUNDED);
+        ticket.setExpiresAt(null);
+        ticketRepository.save(ticket);
+        log.info("Билет id={} переведен в статус REFUNDED", ticket.getId());
     }
 
     // GET: /api/v1/tickets

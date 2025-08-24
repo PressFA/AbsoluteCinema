@@ -1,4 +1,4 @@
-package org.example.absolutecinema.config;
+package org.example.absolutecinema.config.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
