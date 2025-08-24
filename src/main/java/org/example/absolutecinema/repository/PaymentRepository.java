@@ -22,12 +22,15 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     select new org.example.absolutecinema.dto.payment.PaymentDto(
         p.id,
         new org.example.absolutecinema.dto.ticket.MovieForTicketDto(
-            p.ticket.session.movie.title,
-            p.ticket.session.movie.year),
+            m.title,
+            m.year),
         p.amount,
         p.paymentTime,
         p.type)
     from Payment p
+    left join p.ticket t
+    left join t.session s
+    left join s.movie m
     where p.user.id = :userId
     """)
     Page<PaymentDto> findAllPaymentsDtoByUserId(@Param("userId") Long userId, Pageable pageable);

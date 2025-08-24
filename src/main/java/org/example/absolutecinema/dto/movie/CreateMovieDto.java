@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.example.absolutecinema.utils.annotation.MaxCurrentYear;
+import org.example.absolutecinema.annotation.MaxCurrentYear;
 import org.hibernate.validator.constraints.URL;
 
 /**

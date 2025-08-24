@@ -53,8 +53,8 @@ public class PaymentService {
     @Transactional
     // Для UserService
     public void createPayment(CreatePaymentDto dto) {
-        log.debug("Создание платежа для userId={} ticketId={} amount={} type={}",
-                dto.user().getId(), dto.ticket().getId(), dto.amount(), dto.type());
+        log.debug("Создание платежа для userId={} amount={} type={}",
+                dto.user().getId(), dto.amount(), dto.type());
 
         Payment payment = Payment.builder()
                 .ticket(dto.ticket())
@@ -66,10 +66,10 @@ public class PaymentService {
 
         try {
             paymentRepository.save(payment);
-            log.info("Платёж успешно сохранён: id={} userId={} ticketId={} amount={} type={}",
-                    payment.getId(), dto.user().getId(), dto.ticket().getId(), dto.amount(), dto.type());
+            log.info("Платёж успешно сохранён: id={} userId={} amount={} type={}",
+                    payment.getId(), dto.user().getId(), dto.amount(), dto.type());
         } catch (Exception e) {
-            log.error("Ошибка при сохранении платежа для userId={} ticketId={}: {}", dto.user().getId(), dto.ticket().getId(), e.getMessage(), e);
+            log.error("Ошибка при сохранении платежа для userId={}: {}", dto.user().getId(), e.getMessage(), e);
             throw e;
         }
     }

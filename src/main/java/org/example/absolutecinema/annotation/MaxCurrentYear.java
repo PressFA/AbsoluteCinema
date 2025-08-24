@@ -1,4 +1,4 @@
-package org.example.absolutecinema.utils.annotation;
+package org.example.absolutecinema.annotation;
 
 import jakarta.validation.Constraint;
 

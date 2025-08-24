@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.example.absolutecinema.entity.Status;
-import org.example.absolutecinema.utils.annotation.AllowedStatus;
+import org.example.absolutecinema.annotation.AllowedStatus;
 
 /**
  * DTO для запроса на создание билета.<br>
